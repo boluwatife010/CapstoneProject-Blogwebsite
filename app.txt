@@ -1,0 +1,310 @@
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+
+mongoose.connect('mongodb://localhost:27017/my_blog');
+
+const PostSchema = new mongoose.Schema({
+  title: String,
+  body: String,
+  likes: Number,
+  dislikes: Number,
+  comments: [{
+    username: String,
+    comment: String,
+  }],
+});
+
+const Post = mongoose.model('Post', PostSchema);
+
+app.get('/posts', (req, res) => {
+  const posts = Post.find();
+
+  res.json(posts);
+});
+
+app.listen(3000);
+
+CONTROLLERS
+const Post = require('../models/post');
+
+module.exports = {
+  getPosts: async (req, res) => {
+    const posts = await Post.find();
+
+    res.json(posts);
+  },
+
+  getPost: async (req, res) => {
+    const id = req.params.id;
+
+    const post = await Post.findById(id);
+
+    res.json(post);
+  },
+
+  createPost: async (req, res) => {
+    const { title, body } = req.body;
+
+    const post = new Post({ title, body });
+
+    await post.save();
+
+    res.json(post);
+  },
+
+  updatePost: async (req, res) => {
+    const id = req.params.id;
+    const { title, body } = req.body;
+
+    const post = await Post.findByIdAndUpdate(id, { title, body });
+
+    res.json(post);
+  },
+
+  deletePost: async (req, res) => {
+    const id = req.params.id;
+
+    await Post.deleteById(id);
+
+    res.json({ message: 'Post deleted' });
+  },
+};
+
+SERVICES
+const PostController = require('../controllers/post.controller');
+
+module.exports = {
+  getPosts: async () => {
+    return PostController.getPosts();
+  },
+
+  getPost: async (id) => {
+    return PostController.getPost(id);
+  },
+
+  createPost: async (data) => {
+    return PostController.createPost(data);
+  },
+
+  updatePost: async (id, data) => {
+    return PostController.updatePost(id, data);
+  },
+
+  deletePost: async (id) => {
+    return PostController.deletePost(id);
+  },
+};
+
+USER AUTHENTICATION
+SERVICES
+const UserController = require('../controllers/user.controller');
+
+module.exports = {
+  signup: async (data) => {
+    return UserController.signup(data);
+  },
+
+  login: async (data) => {
+    return UserController.login(data);
+  },
+};
+
+CONTROLLERS
+const User = require('../models/user.model');
+
+module.exports = {
+  signup: async (req, res) => {
+    const { email, password, name } = req.body;
+
+    const user = new User({ email, password, name });
+
+    await user.save();
+
+    res.json({ message: 'User created successfully' });
+  },
+
+  login: async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.comparePassword(password)) {
+      return res.json({ message: 'Invalid credentials' });
+    }
+
+    const token = await user.generateToken();
+
+    res.json({ token });
+  },
+};
+
+middleware
+const auth = require('./auth');
+
+app.use('/api/posts', auth, (req, res, next) => {
+  // The user is authenticated, so you can access their information
+  const user = req.user;
+
+  // Do something with the user information
+  next();
+});
+
+
+
+
+
+/*
+
+
+// signup route
+app.post("/signup", async (req, res) => {
+  try {
+    // validate user input
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+    // check if user already exists
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // create new user
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    await newUser.save();
+    // generate token
+    const token = jwt.sign({ id: newUser._id }, "secret", { expiresIn: "1h" });
+    // send response
+    res.status(201).json({
+      message: "User created",
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+      token,
+    });
+  } catch (error) {
+    // handle error
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// signin route
+app.post("/signin", async (req, res) => {
+  try {
+    // validate user input
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+    // find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // compare password
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ message: "Wrong password" });
+    }
+    // generate token
+    const token = jwt.sign({ id: user._id }, "secret", { expiresIn: "1h" });
+    // send response
+    res.status(200).json({
+      message: "User logged in",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+      token,
+    });
+  } catch (error) {
+    // handle error
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// verify token middleware
+const verifyToken = (req, res, next) => {
+  try {
+    // get token from header
+    const token = req.headers.authorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    // verify token
+    const decoded = jwt.verify(token, "secret");
+    req.user = decoded;
+    next();
+  } catch (error) {
+    // handle error
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+// protected route example
+app.get("/profile", verifyToken, async (req, res) => {
+  try {
+    // get user from database
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // send response
+    res.status(200).json({
+      message: "User profile",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+     // handle error
+     res.status(500).json({ message: error.message });
+  }
+});
+
+// start server
+app.listen(3000, () => console.log("Server running on port 3000"));
+
+*/
+
+Create a new page in Notion and give it a title like "System Design".
+Create a section for each major component of your system, such as the database, the endpoints, and the services.
+In each section, provide a brief overview of the component and its purpose.
+For the database, include the schema, the data types, and the relationships between the tables.
+For the endpoints, include the HTTP methods, the URIs, and the request and response payloads.
+For the services, include the names, the interfaces, and the dependencies.
+You can also include diagrams and screenshots to help illustrate your system design.
+Here is an example of how you could structure your Notion document:
+
+System Design
+Database
+Schema
+Data types
+Relationships
+Endpoints
+HTTP methods
+URIs
+Request and response payloads
+Services
+Names
+Interfaces
+Dependencies
+Here are some additional tips for creating a system design document in Notion:
+
+Use clear and concise language.
+Be as specific as possible.
+Use diagrams and screenshots to help illustrate your points.
+Get feedback from others on your document.
