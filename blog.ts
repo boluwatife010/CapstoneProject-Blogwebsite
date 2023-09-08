@@ -1,3 +1,4 @@
+// Import necessary modules from all folders
 require('dotenv').config();
 import express from 'express';
 import mongoose from 'mongoose';

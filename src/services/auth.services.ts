@@ -3,7 +3,7 @@ import jwt, { Secret } from 'jsonwebtoken';
 require('dotenv').config();
 // Function to generate a JWT token
 export function generateAuthToken(userId: string): string {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, { expiresIn: '7days' });
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET as Secret, { expiresIn: '30days' });
   return token;
 }
 // Function to verify a JWT token

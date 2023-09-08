@@ -4,7 +4,7 @@ const router = express.Router();
 import {getAllHandler, createPostHandler, getAPostHandler, editPostHandler,
      deletePostHandler, likePostHandler, commentPostHandler,
        dislikePostHandler, unlikePostHandler,revertDislikePostHandler } from '../controller/blog.controller';
-
+// Router endpoints for the blog with authentication in place
 router.get('/', getAllHandler);
 router.post('/create', authenticateToken, createPostHandler);
 router.get('/name/:id', authenticateToken, getAPostHandler);

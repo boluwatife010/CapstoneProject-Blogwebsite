@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { generateAuthToken,  } from "./auth.services";
 import { signUpRequest, loginRequest } from "../interfaces/user.types";
 
-
+// Function to sign user up
 export const userSignUp = async (body: signUpRequest ): Promise<any> => {
     const {username, email, password} = body;
     const existingUser = await UserModel.find({ username, email });
@@ -20,6 +20,7 @@ export const userSignUp = async (body: signUpRequest ): Promise<any> => {
     return { user: createUser, token };
    
 }
+// Function to log user in
 export const userLogin = async ( body:loginRequest): Promise<any> => {
     const {email, password} = body;
     const user = await UserModel.findOne({email});
