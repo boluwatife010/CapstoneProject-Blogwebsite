@@ -9,9 +9,8 @@ export interface EditPostRequestBody {
 }
 export interface CommentPostRequestBody {
     comments: [{
-      commentid: string;
-      userid: string;
       comment: string;
+      commentid: string;
     }];
   }
 export interface LikesPostRequestBody {

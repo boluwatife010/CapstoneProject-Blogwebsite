@@ -5,7 +5,7 @@ import { createPost, getAllPosts, getApost, editPostById,
 import express from 'express';
 
 // Route handler to get all posts
-export const getAllHandler = async ( res: express.Response) => {
+export const getAllHandler = async (req: express.Request, res: express.Response) => {
   const getPosts = await getAllPosts();
   return res.status(200).send(getPosts);
 };

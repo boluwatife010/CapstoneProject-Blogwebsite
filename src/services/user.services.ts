@@ -6,7 +6,7 @@ import { signUpRequest, loginRequest } from "../interfaces/user.types";
 // Function to sign user up
 export const userSignUp = async (body: signUpRequest ): Promise<any> => {
     const {username, email, password} = body;
-    const existingUser = await UserModel.find({ username, email });
+    const existingUser = await UserModel.findOne({ username, email });
   if (existingUser) {
     throw new Error('One of the two parameters are already in use');
   }
@@ -26,6 +26,9 @@ export const userLogin = async ( body:loginRequest): Promise<any> => {
     const user = await UserModel.findOne({email});
     if (!user) {
         throw new Error('Email not found.');
+    }
+    if (!user.password) {
+        throw new Error('Password is missing.'); // Handle the case where user.password is undefined
     }
     const comparison = await bcrypt.compare(password, user.password);
     if (!comparison) {

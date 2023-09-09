@@ -8,7 +8,7 @@ const postSchema =  new Schema(
       author: String,
       likes: [String],
       dislikes: [String],
-      comments: [{commentid: String},  {comment: String}, {userid: String}]
+      comments: [{comment: String},  {commentid: String}]
     },
     { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } } 
 );
