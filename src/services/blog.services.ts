@@ -178,18 +178,14 @@ export const removeCommentFromPostById = async (postId: string, commentId: strin
   try {
     // Find the post by its ID
     const post = await PostModel.findById(postId);
-
     if (!post) {
       throw new Error('Post not found.');
     }
-
-    // Find the index of the comment to remove in the comments array
+  // Find the index of the comment to remove in the comments array
     const commentIndex = post.comments.findIndex(comment => comment.commentid === commentId);
-
     if (commentIndex === -1) {
       throw new Error('Comment not found.');
     }
-
     // Remove the comment from the comments array
     post.comments.splice(commentIndex, 1);
 

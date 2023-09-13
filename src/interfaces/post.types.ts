@@ -19,3 +19,7 @@ export interface LikesPostRequestBody {
 export interface DislikePostRequestBody {
     dislikes: [string];
 }
+export interface RevertCommentPostRequestBody {
+    postId: string, 
+commentId: string
+}
