@@ -15,6 +15,7 @@ export function generateAuthToken(userId: string): string {
     throw new Error('Invalid token');
   }
 }
+
 // Middleware to check if the request contains a valid JWT token
 export function authenticateToken(req: express.Request, res: express.Response, next: express.NextFunction) {
   // Get the JWT token from the request headers or cookies

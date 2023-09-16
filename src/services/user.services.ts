@@ -1,6 +1,6 @@
 import { UserModel } from "../models/user";
 import bcrypt from 'bcrypt';
-import { generateAuthToken,  } from "./auth.services";
+import { generateAuthToken} from "./auth.services";
 import { signUpRequest, loginRequest } from "../interfaces/user.types";
 
 // Function to sign user up
