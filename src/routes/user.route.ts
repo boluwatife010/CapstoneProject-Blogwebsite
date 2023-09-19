@@ -4,5 +4,5 @@ import { authenticateToken } from '../services/auth.services';
 const router = express.Router();
 // Router endpoints for the user signup and login
 router.post('/signup',  signUpUserHandler);
-router.get('/login', authenticateToken, loginUserHandler);
+router.post('/login', authenticateToken, loginUserHandler);
 export default router;

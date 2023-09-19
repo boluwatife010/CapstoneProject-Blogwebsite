@@ -8,7 +8,7 @@ import {getAllHandler, createPostHandler, getAPostHandler, editPostHandler,
 router.get('/', getAllHandler);
 router.post('/create', authenticateToken, createPostHandler);
 router.get('/name/:id', authenticateToken, getAPostHandler);
-router.post('/edits/:id', authenticateToken, editPostHandler );
+router.put('/edits/:id', authenticateToken, editPostHandler );
 router.delete('/delete/:id', authenticateToken, deletePostHandler);
 router.post('/comments/:id', authenticateToken, commentPostHandler);
 router.post('/likes/:id', authenticateToken, likePostHandler);

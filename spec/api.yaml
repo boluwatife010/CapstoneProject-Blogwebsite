@@ -1,0 +1,373 @@
+openapi: 3.0.0
+info:
+  title: Blog Backend API
+  version: 1.0.0-oas3
+  description: RESTful API for managing a blog website's backend.
+
+paths:
+  /user/signup:
+    post:
+      summary: User Signup
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successfully registered user.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400' : 
+          description: An error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /user/login:
+    post: 
+      summary: User Login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successfully logged in the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400': 
+          description: An error occurred.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/:
+    get:
+      summary: Get All Posts
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      responses:
+        '200': 
+          description: Successfully got all posts.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Failed to get all posts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /posts/create:
+    post:
+      summary: Create a post
+      tags:
+        - Post
+      responses:
+        '200': 
+          description: Successfully created a post.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Failed to create a post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /posts/name/{id}:
+    get:
+      summary: Get a Post by ID
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to retrieve.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Successfully got the post.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Failed to get the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /posts/comment/{id}:
+    get:
+      summary: Comment on a post by ID
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to comment on.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Successfully created the comment.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Failed to create a comment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/edit/{id}:
+    put:
+      summary: Update a Post by ID
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to update.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200': 
+          description: Successfully edited the post.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to edit the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/delete/{id}:
+    delete: 
+      summary: Delete a Post by ID
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to delete.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Successfully deleted the post.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to delete the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/like/{id}: 
+    post:
+      summary: Like a Post
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to like.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully liked the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to like the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/dislike/{id}:
+    post:
+      summary: Dislike a Post
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to dislike.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully disliked the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to dislike the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/unlike/{id}:
+    post:
+      summary: Unlike a Post
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to unlike.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully unliked the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to unlike the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  /posts/revert-dislike/{id}:
+    post:
+      summary: Revert Dislike on a Post
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/Token'
+        - name: id
+          in: path
+          description: The ID of the post to revert the dislike.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully reverted the dislike on the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+        '400':
+          description: Failed to revert the dislike on the post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username: 
+          type: string
+        email: 
+          type: string
+        password: 
+          type: string
+      required: 
+        - username
+        - email
+        - password
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+      required:
+        - title
+        - content
+    Comment:
+      type: object
+      properties:
+        comment:
+          type: string
+        commentid: 
+          type: string
+        userid:
+          type: string
+    successResponse:
+      type: object
+      properties: 
+        message: 
+          type: string
+      required: 
+        - message
+    errorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+  parameters: 
+    
+    Token:  
+      name: token
+      in: header
+      description: Authentication token.
+      required: true
+      schema:
+        type: string
